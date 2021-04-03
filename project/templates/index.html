@@ -1,0 +1,154 @@
+{% extends "_base.html" %}
+
+{% block content %}
+  <div class="container">
+    <section class="section">
+      <h1 class="title is-1">Google Analytics Dashboard</h1>
+
+      <br>
+
+      <div class="is-flex has-text-centered">
+        <div class="dropdown">
+          <div class="dropdown-trigger">
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+              <span class="time-frame"></span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <a class="dropdown-item" onClick="updateTimeFrame(7)">Last 7 Days</a>
+              <a class="dropdown-item" onClick="updateTimeFrame(30)">Last 30 Days</a>
+              <a class="dropdown-item" onClick="updateTimeFrame(90)">Last 90 Days</a>
+              <a class="dropdown-item" onClick="updateTimeFrame(180)">Last 180 Days</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="icon-container">
+          <span class="icon is-medium">
+            <i class="fas fa-redo"></i>
+          </span>
+        </div>
+      </div>
+
+      <br>
+      <small>Last updated: <small class="date-time"></small></small>
+    </section>
+
+    <!-- main analytics -->
+    <section class="section">
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <div class="content has-text-centered">
+                <h4 class="title is-5">Pageviews</h4>
+                <p>
+                  <span class="pageviews-current"></span>
+                  <br/>
+                  <small class="pageviews-previous"></small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <div class="content has-text-centered">
+                <h4 class="title is-5">Users</h4>
+                <p>
+                  <span class="users-current"></span>
+                  <br/>
+                  <small class="users-previous"></small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <div class="content has-text-centered">
+                <h4 class="title is-5">Bounce Rate</h4>
+                <p>
+                  <span class="bounce-rate-current"></span>
+                  <br/>
+                  <small class="bounce-rate-previous"></small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <div class="content has-text-centered">
+                <h4 class="title is-5">Avg. Time on Page</h4>
+                <p>
+                  <span class="avg-time-page-current"></span>
+                  <br/>
+                  <small class="avg-time-page-previous"></small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <div class="content has-text-centered">
+                <h4 class="title is-5">Active Users</h4>
+                <p><span class="active-users"></span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- top content -->
+    <section class="section">
+      <div class="columns">
+        <div class="column is-three-fifths">
+          <h2 class="title is-2">Top Content</h2>
+          <table class="table top-content-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>URL</th>
+                <th>Pageviews</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="column">
+          <h2 class="title is-2">Top Sources</h2>
+          <table class="table top-sources-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>URL</th>
+                <th>Pageviews</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="content">
+        <p>© 2021 <a href="https://testdriven.io">TestDriven.io</a></p>
+      </div>
+    </footer>
+  </div>
+{% endblock %}

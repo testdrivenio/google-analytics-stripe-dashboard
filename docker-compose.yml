@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ['python', 'manage.py', 'run', '-h', '0.0.0.0']
+    volumes:
+      - '.:/usr/src/app'
+    ports:
+      - 5004:5000
+    environment:
+      - FLASK_ENV=development
+      - GA_VIEW_ID=<UPDATE>

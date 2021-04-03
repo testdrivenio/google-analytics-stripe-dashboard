@@ -1,0 +1,21 @@
+.card {
+  height: 142px;
+}
+
+.footer {
+  background-color: white;
+}
+
+.icon {
+  cursor: pointer;
+  height: 40px !important;
+  margin-left: 1em;
+}
+
+.green-text {
+  color: green;
+}
+
+.red-text {
+  color: red;
+}
