@@ -17,3 +17,7 @@ $ docker-compose up -d --build
 ```
 
 View the dashboard at [http://localhost:5004/](http://localhost:5004/).
+
+## Example
+
+![Example Dashboard](example.png)
