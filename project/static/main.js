@@ -20,13 +20,45 @@
 
 })();
 
-function updateTimeFrame(days) {
-  document.querySelector(".date-time").innerHTML = "";
+function clearExistingData() {
+  // stripe
+  document.querySelector(".stripe-charges-current").innerHTML = "-";
+  document.querySelector(".stripe-amount-current").innerHTML = "-";
+  document.querySelector(".stripe-charges-previous").innerHTML = "-";
+  document.querySelector(".stripe-charges-previous").setAttribute("data-tooltip", "-");
+  document.querySelector(".stripe-amount-previous").innerHTML = "-";
+  document.querySelector(".stripe-amount-previous").setAttribute("data-tooltip", "-");
 
-  const timeFrame = document.querySelector(".time-frame");
-  timeFrame.innerHTML = `Last ${days} Days`;
+  // google
+  document.querySelector(".pageviews-current").innerHTML = "-";
+  document.querySelector(".users-current").innerHTML = "-";
+  document.querySelector(".bounce-rate-current").innerHTML = "-";
+  document.querySelector(".avg-time-page-current").innerHTML = "-";
+  document.querySelector(".pageviews-previous").innerHTML = "-";
+  document.querySelector(".pageviews-previous").setAttribute("data-tooltip", "-");
+  document.querySelector(".users-previous").innerHTML = "-";
+  document.querySelector(".users-previous").setAttribute("data-tooltip", "-");
+  document.querySelector(".bounce-rate-previous").innerHTML = "-";
+  document.querySelector(".bounce-rate-previous").setAttribute("data-tooltip", "-");
+  document.querySelector(".avg-time-page-previous").innerHTML = "-";
+  document.querySelector(".avg-time-page-previous").setAttribute("data-tooltip", "-");
+  document.querySelector(".active-users").innerHTML = "-";
 
-  fetch("api/data", {
+  // delete existing data from top content table
+  const topContentTable = document.querySelector(".top-content-table");
+  while (document.querySelector(".top-content-table").rows.length > 1) {
+    topContentTable.deleteRow(1);
+  }
+
+  // delete existing data from top sources table
+  const topSourcesTable = document.querySelector(".top-sources-table");
+  while (topSourcesTable.rows.length > 1) {
+    topSourcesTable.deleteRow(1);
+  }
+}
+
+function getGoogleData(days) {
+  fetch("api/data/google", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -54,10 +86,10 @@ function updateTimeFrame(days) {
     const previousAvgTimeOnPage = previous.avgTimeOnPage;
 
     // percent change
-    const changePageViews = ((currentPageViews - previousPageViews) / previousPageViews) * 100
-    const changeUsers = ((currentUsers - previousUsers) / previousUsers) * 100
-    const changeBounceRate = ((currentBounceRate - previousBounceRate) / previousBounceRate) * 100
-    const changeAvgTimeOnPage = ((currentAvgTimeOnPage - previousAvgTimeOnPage) / previousAvgTimeOnPage) * 100
+    const changePageViews = ((currentPageViews - previousPageViews) / previousPageViews) * 100;
+    const changeUsers = ((currentUsers - previousUsers) / previousUsers) * 100;
+    const changeBounceRate = ((currentBounceRate - previousBounceRate) / previousBounceRate) * 100;
+    const changeAvgTimeOnPage = ((currentAvgTimeOnPage - previousAvgTimeOnPage) / previousAvgTimeOnPage) * 100;
 
     // determine css color
     // if percent change is negative -> red
@@ -99,20 +131,19 @@ function updateTimeFrame(days) {
 
     // update DOM with the values - previous
     document.querySelector(".pageviews-previous").innerHTML = `${changePageViews.toFixed(2)}%`;
+    document.querySelector(".pageviews-previous").setAttribute("data-tooltip", numberWithCommas(previousPageViews));
     document.querySelector(".users-previous").innerHTML = `${changeUsers.toFixed(2)}%`;
+    document.querySelector(".users-previous").setAttribute("data-tooltip", numberWithCommas(previousUsers));
     document.querySelector(".bounce-rate-previous").innerHTML = `${changeBounceRate.toFixed(2)}%`;
+    document.querySelector(".bounce-rate-previous").setAttribute("data-tooltip", `${previousBounceRate.toFixed(2)}%`);
     document.querySelector(".avg-time-page-previous").innerHTML = `${changeAvgTimeOnPage.toFixed(2)}%`;
+    document.querySelector(".avg-time-page-previous").setAttribute("data-tooltip", displayTime(previousAvgTimeOnPage));
 
     document.querySelector(".active-users").innerHTML = activeUsers;
 
-    // delete existing data from top content table
-    const topContentTable = document.querySelector(".top-content-table");
-    while (topContentTable.rows.length > 1) {
-      topContentTable.deleteRow(1);
-    }
-
     // update top content table
-    var num = 1
+    var num = 1;
+    const topContentTable = document.querySelector(".top-content-table");
     for (const key in topContent) {
       const row = topContentTable.insertRow(-1);
       row.insertCell(0).innerHTML = num;
@@ -121,14 +152,9 @@ function updateTimeFrame(days) {
       num++;
     }
 
-    // delete existing data from top sources table
-    const topSourcesTable = document.querySelector(".top-sources-table");
-    while (topSourcesTable.rows.length > 1) {
-      topSourcesTable.deleteRow(1);
-    }
-
     // update top sources table
-    var num = 1
+    const topSourcesTable = document.querySelector(".top-sources-table");
+    var num = 1;
     for (const key in topSources) {
       const row = topSourcesTable.insertRow(-1);
       row.insertCell(0).innerHTML = num;
@@ -136,13 +162,64 @@ function updateTimeFrame(days) {
       row.insertCell(2).innerHTML = parseInt(topSources[key]).toLocaleString();
       num++;
     }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}
+
+function getStripeData(days) {
+  fetch("api/data/stripe", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({days}),
+  })
+  .then(response => response.json())
+  .then(data => {
+    const total_current_charges = data.current_stripe_data.total_charges;
+    const total_previous_charges = data.previous_stripe_data.total_charges;
+    const total_current_amount = data.current_stripe_data.total_amount;
+    const total_previous_amount = data.previous_stripe_data.total_amount;
+
+    // percent change
+    const charges = ((total_current_charges - total_previous_charges) / total_previous_charges) * 100;
+    const amount = ((total_current_amount - total_previous_amount) / total_previous_amount) * 100;
+    // determine css color
+    // if percent change is negative -> red
+    // if percent change is positive -> green
+    if (Math.sign(charges) === -1) {
+      document.querySelector(".stripe-charges-previous").classList.remove("green-text");
+      document.querySelector(".stripe-charges-previous").classList.add("red-text");
+    } else {
+      document.querySelector(".stripe-charges-previous").classList.remove("red-text");
+      document.querySelector(".stripe-charges-previous").classList.add("green-text");
+    }
+    if (Math.sign(amount) === -1) {
+      document.querySelector(".stripe-amount-previous").classList.remove("green-text");
+      document.querySelector(".stripe-amount-previous").classList.add("red-text");
+    } else {
+      document.querySelector(".stripe-amount-previous").classList.remove("red-text");
+      document.querySelector(".stripe-amount-previous").classList.add("green-text");
+    }
+
+    // update DOM with the values - current
+    document.querySelector(".stripe-charges-current").innerHTML = numberWithCommas(total_current_charges);
+    document.querySelector(".stripe-amount-current").innerHTML = `${numberWithCommas(total_current_amount.toFixed(2))}`;
+
+    // update DOM with the values - previous
+    document.querySelector(".stripe-charges-previous").innerHTML = `${charges.toFixed(2)}%`;
+    document.querySelector(".stripe-charges-previous").setAttribute("data-tooltip", numberWithCommas(total_previous_charges));
+    document.querySelector(".stripe-amount-previous").innerHTML = `${amount.toFixed(2)}%`;
+    document.querySelector(".stripe-amount-previous").setAttribute("data-tooltip", numberWithCommas(total_previous_amount.toFixed(2)));
 
     document.querySelector(".date-time").innerHTML = new Date();
   })
   .catch((error) => {
     console.error(error);
   });
-}
+};
 
 function displayTime(seconds) {
   const format = val => `0${Math.floor(val)}`.slice(-2)
@@ -150,4 +227,19 @@ function displayTime(seconds) {
   const minutes = (seconds % 3600) / 60
 
   return [hours, minutes, seconds % 60].map(format).join(":")
+}
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function updateTimeFrame(days) {
+  document.querySelector(".date-time").innerHTML = "";
+
+  const timeFrame = document.querySelector(".time-frame");
+  timeFrame.innerHTML = `Last ${days} Days`;
+
+  clearExistingData();
+  getStripeData(days);
+  getGoogleData(days);
 }

@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container">
     <section class="section">
-      <h1 class="title is-1">Google Analytics Dashboard</h1>
+      <h1 class="title is-1">Google Analytics + Stripe Dashboard</h1>
 
       <br>
 
@@ -39,6 +39,38 @@
     </section>
 
     <!-- main analytics -->
+    <section class="section">
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <div class="content has-text-centered">
+                <h4 class="title is-5">Stripe Charges</h4>
+                <p>
+                  <span class="stripe-charges-current"></span>
+                  <br/>
+                  <small class="stripe-charges-previous"></small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <div class="content has-text-centered">
+                <h4 class="title is-5">Stripe Amount</h4>
+                <p>
+                  <span class="stripe-amount-current"></span>
+                  <br/>
+                  <small class="stripe-amount-previous"></small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <section class="section">
       <div class="columns">
         <div class="column">

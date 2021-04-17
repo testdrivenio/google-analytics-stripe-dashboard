@@ -4,11 +4,13 @@ Simple Google Analytics dashboard
 
 ## Setup
 
-creating a project in the Google API Console, enabling the API, and creating credentials.
+First, rename *.env.dev-sample* to *.env.dev*.
 
 Create a new project on [Google Developers Console](https://console.cloud.google.com/apis/dashboard), generate credentials, and download and save the *client_secrets.json* file to the "project" directory. Enable the Analytics Reporting and Google Analytics APIs.
 
-Update the `GA_VIEW_ID` environment variable with your Google Analytics view ID in the *docker-compose.yml*.
+Update the `GA_VIEW_ID` environment variable with your Google Analytics view ID in *.env.dev*.
+
+Assuming you have a Stripe account configured, add the secret key to *.env.dev*.
 
 Build the image and spin up the container:
 
@@ -16,8 +18,14 @@ Build the image and spin up the container:
 $ docker-compose up -d --build
 ```
 
+Create the database tables:
+
+```sh
+$ docker-compose exec web python manage.py create_db
+```
+
 View the dashboard at [http://localhost:5004/](http://localhost:5004/).
 
 ## Example
 
-![Example Dashboard](example.png)
+![Example Dashboard](demo.gif)
