@@ -1,4 +1,4 @@
-# Google Analytics Dashboard
+# Google Analytics + Stripe Dashboard
 
 Simple Google Analytics dashboard
 
